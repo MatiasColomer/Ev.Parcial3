@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Menú</h2>
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-3">
+                <div class="card">
+                    <img src="{% if product.photo %}/media/{{ product.photo }}{% else %}{% static 'images/default.jpg' %}{% endif %}" class="card-img-top" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">Precio: ${{ product.price }}</p>
+                        <button class="btn btn-primary add-to-cart" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <h3 class="mt-5">Carrito</h3>
+        <ul id="cartDisplay" class="list-group"></ul>
+        <div class="mt-3">
+            <h4>Total: $<span id="totalPrice">0.00</span></h4>
+        </div>
+
+        <!-- Botón para abrir el modal -->
+        <button type="button" class="btn btn-success mt-3" data-toggle="modal" data-target="#purchaseModal">
+            Enviar Compra
+        </button>
+
+        <!-- Modal para datos de compra -->
+        <div class="modal fade" id="purchaseModal" tabindex="-1" role="dialog" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="purchaseModalLabel">Datos de Compra</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="purchaseForm" action="{% url 'save_purchase' %}" method="post">
+                            {% csrf_token %}
+                            <div id="productsContainer">
+                                <!-- Aquí se añadirán dinámicamente los productos del carrito -->
+                            </div>
+                            <div class="form-group">
+                                <label for="nombre">Nombre:</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Correo Electrónico:</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="direccion">Dirección:</label>
+                                <input type="text" class="form-control" id="direccion" name="direccion" required>
+                            </div>
+                            <input type="hidden" id="purchaseData" name="purchase_data" value="">
+                            <!-- Agregar un campo oculto para enviar los datos del carrito -->
+                        </form>                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="sendPurchaseButton" class="btn btn-primary">Enviar Compra</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mt-5">Indicadores Económicos</h3>
+        <div id="economicIndicatorsCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner" id="economicIndicators">
+                <!-- Aquí se mostrarán los indicadores económicos -->
+            </div>
+            <a class="carousel-control-prev" href="#economicIndicatorsCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Anterior</span>
+            </a>
+            <a class="carousel-control-next" href="#economicIndicatorsCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Siguiente</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'main/js/script.js' %}"></script>
+</body>
+</html>
